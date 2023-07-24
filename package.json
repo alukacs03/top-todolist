@@ -1,0 +1,28 @@
+{
+  "name": "top-todolist",
+  "version": "1.0.0",
+  "description": "Todo List project done for The Odin Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukiakos/top-todolist.git"
+  },
+  "author": "A. Lukacs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukiakos/top-todolist/issues"
+  },
+  "homepage": "https://github.com/lukiakos/top-todolist#readme",
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "file-loader": "^6.2.0",
+    "style-loader": "^3.3.3",
+    "svg-inline-loader": "^0.8.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
