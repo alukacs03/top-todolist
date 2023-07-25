@@ -11,7 +11,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
 </head>
 <body>
-    <div id="content"></div>
+    <div id="content">
+        <input type="text" name="newName" id="projectName">
+        <button id = 'makeProject'>Click me to make new project</button>
+        <button id = "getAllProjects">Click me to get all projects</button>
+
+        <form action="">
+            <input type="text" name="" id="todoTitle">
+            <input type="text" name="" id="todoDescription">
+            <input type="date" name="" id="todoDueDate">
+            <input type="text" name="" id="todoPriority">
+            <input type="text" name="" id="todoNotes">
+        </form>
+        <select name="projectsDropdown" id="projectsDropDown">
+            
+        </select>
+        <button id="addTodo">ADD TODO</button>
+        <button id="refreshButton">refresh projects</button>
+    </div>
     <script defer src="./main.js"></script>
 </body>
 </html>
