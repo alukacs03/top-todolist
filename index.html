@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="../src/style.css">
     <title>TodoList</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
 </head>
 <body>
     <div id="content">
-        <input type="text" name="newName" id="projectName">
+        <!-- <input type="text" name="newName" id="projectName">
         <button id = 'makeProject'>Click me to make new project</button>
         <button id = "getAllProjects">Click me to get all projects</button>
 
@@ -23,11 +23,167 @@
             <input type="text" name="" id="todoPriority">
             <input type="text" name="" id="todoNotes">
         </form>
-        <select name="projectsDropdown" id="projectsDropDown">
+        <select name="projectsDropDown" id="projectsDropDown">
             
         </select>
         <button id="addTodo">ADD TODO</button>
-        <button id="refreshButton">refresh projects</button>
+        <button id="refreshButton">refresh projects</button> -->
+        <div id="sidebar">
+            <h1 id = 'title'>TASKMASTER</h2>
+            <h3 id="homeBtn" class="sidebarelement">Home</h3>
+            <h3 id="todayBtn" class="sidebarelement">Today</h3>
+            <h3 id="thisWeekBtn" class="sidebarelement">This week</h3>
+            <div id="projectsWrapper">
+                <h3 id="projectsBtn" class="sidebarelement">Projects</h3>
+                <img id = 'projectsArrow' class = "arrow up" src="../src/images/arrow.svg" alt="">
+            </div>
+            <div id="projectElementWrapper">
+                <p class="projectElement">Project 1</p>
+                <p class="projectElement">Project 1</p>
+                <p class="projectElement">Project 1</p>
+                <p class="projectElement">Project 1</p>
+
+
+            </div>
+            <div id = 'sideBarCloserBtn'>
+                <img class = "arrow left" src="../src/images/arrow.svg" alt="">
+            </div>
+        </div>
+        <div id="mainpage">
+            <h1 id="mainTitle">ALL TASKS</h1>
+            <button class = 'addTaskBtn'>Add Task</button>
+            <div id="gridWrapper">
+                <div class="gridElement titleRow">
+                    <div class="gridTextElement"></div>
+                    <div class="gridTextElement">title</div>
+                    <div class="gridTextElement">description</div>
+                    <div class="gridTextElement">due date</div>
+                    <div class="gridTextElement">priority</div>
+                    <div class="gridTextElement">notes</div>
+                    <div class="gridTextElement">edit</div>
+                    <div class="gridTextElement">delete</div>
+                </div>
+                <div class="gridElement">
+                    <input type="checkbox" name="" id="">
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                    <div class="gridTextElement">delete</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                <div class="gridElement">
+                    <div class="gridTextElement">#</div>
+                    <div class="gridTextElement">get coffee</div>
+                    <div class="gridTextElement">meet joe and get coffee</div>
+                    <div class="gridTextElement">2023.08.31.</div>
+                    <div class="gridTextElement">high</div>
+                    <p class="gridTextElement">Meet him at 308 Negra Arroyo Laneeeeeeeeeee</p>
+                    <div class="gridTextElement">edit</div>
+                </div>
+                
+            </div>
+        </div>
     </div>
     <script defer src="./main.js"></script>
 </body>
