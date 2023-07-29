@@ -1,0 +1,158 @@
+:root {
+    --sidebar-color: #486142;
+    --background-color: #C1E0B9;
+    --light-green: #73A966;
+}
+
+html, body {
+    background-color: var(--background-color);
+    height: 100%;
+    font-family: inter, "helvetica", "sans-serif", "verdana";
+    padding: 0;
+    margin: 0;
+}
+
+#content {
+    height: 100%;
+    padding: 0;
+    display: flex;
+}
+
+#sidebar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 100%;
+    justify-content: start;
+    align-items: center;
+    background-color: var(--sidebar-color);
+    color: white;
+    transition: 0.3s;
+}
+
+#sidebar > * {
+    transition: 0.3s;
+}
+
+#projectsWrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#sideBarCloserBtn {
+    position: absolute;
+    left: 100%;
+    height: 50px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 10px 10px 0;
+    background-color: var(--light-green);
+}
+
+#sideBarCloserBtn:hover {
+    background-color: #02ca1d;
+}
+
+#projectElementWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow: scroll;
+}
+
+
+#mainpage {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#gridWrapper {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-auto-rows: 4rem;
+    padding: 5rem;
+    padding-top: 0;
+    margin-top: 2rem;
+    box-sizing: border-box;
+    grid-row-gap: 1rem;
+    overflow: scroll;
+}
+
+.gridElement {
+    display: grid;
+    grid-template-columns: 4rem 1fr 2fr 1fr 1fr 3fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    background-color: var(--light-green);
+    border-radius: 1rem;
+}
+
+.gridElement.titleRow {
+    background-color: transparent !important;
+    align-items: end;
+}
+
+.gridTextElement {
+    max-width: 100%;
+    min-width: 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.addTaskBtn {
+    border: none;
+    font-size: 1.2rem;
+    text-transform:uppercase;
+    background-color: var(--sidebar-color);
+    color: white;
+    padding: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    letter-spacing: .1rem;
+}
+
+
+.projectElement {
+    transition: 0.3s;
+}
+
+
+.arrow{
+    color: white;
+    filter: invert(100%) sepia(0%) saturate(7465%) hue-rotate(57deg) brightness(103%) contrast(103%);
+    width: 1rem;
+    transition: 0.2s;
+}
+
+.arrow.down {
+    transform: rotate(90deg);
+}
+
+.arrow.up {
+    transform: rotate(-90deg);
+}
+
+.arrow.right {
+    transform: rotate(0deg);
+}
+
+.arrow.left {
+    transform: rotate(180deg);
+}
+
+#sideBarCloserBtn > .arrow {
+    width: 1.3rem;
+}
