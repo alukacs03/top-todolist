@@ -1,12 +1,14 @@
 import {format} from 'date-fns';
 
 export class Todo {
-    constructor(title, description, dueDate, priority, notes) {
+    constructor(title, description, dueDate, priority, notes, projectId) {
         this.title = title;
         this.description = description;
         this.dueDate = format(new Date(dueDate), 'dd-MM-yyyy');
         this.priority = priority;
         this.notes = notes;
         this.complete = false;
+        this.id = Date.now();
+        this.projectId = projectId;
     };
 }

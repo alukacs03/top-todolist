@@ -1,4 +1,4 @@
-import { saveProject } from './storage';
+import { storage } from './storage';
 
 export class Project {
     constructor(name) {
@@ -7,7 +7,7 @@ export class Project {
         this.name = name;
         this.todos = [];
         //automatically add project to localStorage
-        saveProject(this);
+        storage.saveProject(this);
     };
     getName () {
         return this.name;
