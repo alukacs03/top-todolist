@@ -1,7 +1,9 @@
 import { Project } from '../src/components/projects';
 import { Todo } from '../src/components/todos';
-import { saveProject } from '../src/components/storage';
+import { storage } from '../src/components/storage';
 import { UI } from '../src/components/pageRenderer';
+
+UI.initialLoad();
 
 // const inputField = document.querySelector('#projectName');
 // const makeButton = document.querySelector('#makeProject');
@@ -33,7 +35,7 @@ import { UI } from '../src/components/pageRenderer';
 //     let projectId = selectedProject.id;
 //     let newTodo = new Todo(todoTitle, todoDescription, todoDueDate, todoPriority, todoNotes, projectId);
 //     selectedProject.todos.push(newTodo);
-//     saveProject(selectedProject)
+//     storage.saveProject(selectedProject)
 // })
 
 
@@ -63,16 +65,3 @@ import { UI } from '../src/components/pageRenderer';
 //         }
 //     })
 // });
-
-const hideButton = document.querySelector('#sideBarCloserBtn');
-hideButton.addEventListener('click', UI.toggleSidebar);
-
-const projectToggleText = document.getElementById('projectsBtn');
-const projectToggleBtn = document.getElementById('projectsArrow');
-
-projectToggleText.addEventListener('click', UI.toggleProjectList);
-projectToggleBtn.addEventListener('click', UI.toggleProjectList);
-
-
-UI.loadProjectList();
-UI.loadAllTasks();

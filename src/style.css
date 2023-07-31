@@ -32,7 +32,33 @@ html, body {
 }
 
 #sidebar > * {
-    transition: 0.3s;
+    transition: ease-in-out 0.1s;
+}
+
+#buttonDiv.projectPage {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr max-content 1fr;
+    justify-items: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+#buttonDiv.allTasksPage {
+    width: 100%;
+    display: flex;
+    justify-content:space-evenly;
+    align-items:stretch;
+}
+
+#editProject {
+    justify-self:start;
+}
+
+#addTask {
+    justify-self: end;
 }
 
 #projectsWrapper {
@@ -110,7 +136,7 @@ html, body {
     padding-right: 1rem;
 }
 
-.addTaskBtn {
+.greenBtn {
     border: none;
     font-size: 1.2rem;
     text-transform:uppercase;

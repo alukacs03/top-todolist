@@ -1,11 +1,12 @@
 import { storage } from './storage';
 
 export class Project {
-    constructor(name) {
+    constructor(name, notes = "", id = Date.now(), todos = []) {
         //id based on the current date, breaks if user creates more than one project in a millisecond, but that is unlikely
-        this.id = Date.now();
+        this.id = id;
         this.name = name;
-        this.todos = [];
+        this.todos = todos;
+        this.notes = notes;
         //automatically add project to localStorage
         storage.saveProject(this);
     };
@@ -16,6 +17,7 @@ export class Project {
         return this.todos;
     };
     addTodo(todo) {
-        this.todos.push(todo);
+        this.todos.push(todo); // add todo to the object
+        storage.saveProject(this); // immediately update the object in localStorage
     };
 }

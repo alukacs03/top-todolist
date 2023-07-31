@@ -2,9 +2,22 @@ import { storage } from './storage';
 
 export const UI = {
     initialLoad() {
+        const hideButton = document.querySelector('#sideBarCloserBtn');
+        hideButton.addEventListener('click', UI.toggleSidebar);
 
+        const projectToggleText = document.getElementById('projectsBtn');
+        const projectToggleBtn = document.getElementById('projectsArrow');
+
+        projectToggleText.addEventListener('click', UI.toggleProjectList);
+        projectToggleBtn.addEventListener('click', UI.toggleProjectList);
+
+        UI.loadProjectList();
+
+        // only for development, will be removed
+        UI.loadAllTasks();
+        
     },
-    toggleSidebar() {
+    toggleSidebar() { // toggles the sidebar
         const sideBar = document.getElementById('sidebar');
         if (sideBar.dataset.hidden != 'true') {
             sideBar.style.width = 0;
@@ -38,7 +51,7 @@ export const UI = {
             })
         }
     },
-    toggleProjectList() {
+    toggleProjectList() { // toggles whether the projects show up on the sidebar or not
         const projectToggleText = document.getElementById('projectsBtn');
         const projectToggleBtn = document.getElementById('projectsArrow');
         let projectElements = document.querySelectorAll('.projectElement');
@@ -59,9 +72,9 @@ export const UI = {
         }
     
     },
-    loadProjectList() {
+    loadProjectList() { // loads the projects list on the sidebar
         const projectElementWrapper = document.getElementById('projectElementWrapper');
-        let projects = Object.values(localStorage);
+        let projects = Object.values(localStorage)
         projects.forEach(element => {
             let e = JSON.parse(element)
             const newProject = document.createElement('p');
@@ -74,19 +87,12 @@ export const UI = {
             projectElementWrapper.appendChild(newProject);
         });
     },
-    loadProjectPage(id) {
+    loadProjectPage(id) { // (WIP -> IMPLEMENT) load a specific project's todos
         console.log(id)
     },
-    loadAllTasks() {
+    loadAllTasks() { // loads all tasks to the grid from all projects
         const gridWrapper = document.getElementById('gridWrapper');
-        let gridChildren = document.querySelectorAll('.gridElement');
-        gridChildren.forEach(e => { // remove all rows except for the title row
-            if (e.classList.contains('titleRow')) {
-                return;
-            } else {
-                gridWrapper.removeChild(e)
-            }
-        })
+        UI.clearGrid();
         let projects = Object.values(localStorage);
         let todos = [];
         projects.forEach(element => { // put all todos in one array (todo lists the projects contain)
@@ -143,12 +149,22 @@ export const UI = {
             })
         })
     },
-    handleEdit(e) {
+    handleEdit(e) { // (WIP -> IMPLEMENT) handles edit button press
         alert('please implement edit functionality');
         console.log(e);
     },
-    handleDelete(todoId, projectId) {
+    handleDelete(todoId, projectId) { // handles the delete button press
         storage.deleteTodo(todoId, projectId);
-        this.loadAllTasks();
+        this.loadAllTasks(); // replace with logic to decide whether it's all tasks, project or today / this week view
     },
-}
+    clearGrid() { //clears the grid except for the first (title) row
+        let gridChildren = document.querySelectorAll('.gridElement');
+        gridChildren.forEach(e => { // remove all rows except for the title row
+            if (e.classList.contains('titleRow')) {
+                return;
+            } else {
+                gridWrapper.removeChild(e)
+            }
+        })
+    },
+};
