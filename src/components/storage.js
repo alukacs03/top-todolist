@@ -1,5 +1,4 @@
 import { Project } from './projects';
-import { UI } from './pageRenderer';
 
 const storage = {
     saveProject(project) {
@@ -15,6 +14,9 @@ const storage = {
         });
         let freshProject = new Project(project.name, project.notes, project.id, project.todos)
         storage.saveProject(freshProject)
+    },
+    deleteProject (projectId) { // (WIP -> IMPLEMENT)
+
     },
 }
 
