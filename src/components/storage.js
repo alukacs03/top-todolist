@@ -5,7 +5,7 @@ const storage = {
         localStorage.setItem(JSON.stringify(project.id), JSON.stringify(project));
     },
     deleteTodo(todoId, projectId) {
-        let project = JSON.parse(localStorage.getItem(projectId));
+        let project = this.getProject(projectId);
         let discardedTodos = [];
         project.todos.forEach(e => {
             if (e.id == todoId) {
@@ -17,6 +17,25 @@ const storage = {
     },
     deleteProject (projectId) { // (WIP -> IMPLEMENT)
 
+    },
+    createDefaultProject() {
+        if (Object.keys(localStorage).includes('"defaultProject"')) {
+            return;
+        } else {
+            let defaultProject = new Project('defaultProject', '', 'defaultProject');
+        }
+    },
+    getProject(id) {
+        function isNumeric(value) {
+            return /^-?\d+$/.test(value);
+        }
+        let project = "";
+        if (isNumeric(id)) {
+            project = JSON.parse(localStorage.getItem(id));
+        } else {
+            project = JSON.parse(localStorage.getItem(`"${id}"`))
+        }
+        return project;
     },
 }
 

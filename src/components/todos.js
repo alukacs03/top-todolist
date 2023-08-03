@@ -1,7 +1,7 @@
 import {format} from 'date-fns';
 
-export class Todo {
-    constructor(title, description, dueDate, priority, notes, projectId) {
+class Todo {
+    constructor(title, dueDate, projectId, description = '', priority = '', notes = '') {
         this.title = title;
         this.description = description;
         this.dueDate = format(new Date(dueDate), 'dd-MM-yyyy');
@@ -12,3 +12,12 @@ export class Todo {
         this.projectId = projectId;
     };
 }
+
+const TodoManager = {
+    createTodo(title, dueDate, projectId, description = '', priority = '', notes = '') {
+        let todo = new Todo(title, dueDate, projectId, description, priority, notes);
+        return todo;
+    },
+}
+
+export { Todo, TodoManager }

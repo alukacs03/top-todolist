@@ -2,6 +2,9 @@
     --sidebar-color: #486142;
     --background-color: #C1E0B9;
     --light-green: #73A966;
+    --cancel-color: #A5745F;
+    --clear-color: #6FAEA2;
+    --input-background-color: #6F9565;
 }
 
 html, body {
@@ -93,9 +96,106 @@ html, body {
 
 #mainpage {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+}
+
+#addTaskBackGround {
+    background-color: var(--light-green);
+    height: 80%;
+    width: clamp(300px, 80%, 1920px);
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: content-box;
+}
+
+#popUpGrid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 15ch auto;
+    grid-template-rows: repeat(6, 1fr) 8fr 2fr;
+    margin-top: 1rem;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+#addTaskTitle {
+    color: white;
+    font-variant: small-caps;
+    letter-spacing: 0.05rem;
+    padding: 0;
+    margin: 0;
+}
+
+.taskLeftColumn {
+    justify-self: end;
+    color: white;
+}
+
+.taskRightColumn, .textInput, #projectSelect {
+    padding: 0.35rem;
+    border-radius: 0.4rem;
+    box-sizing: border-box;
+    border: 0;
+    outline: 0;
+    background-color: var(--input-background-color);
+    color: white;
+}
+
+label {
+    color: white;
+}
+
+#priorityDiv {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    
+}
+
+
+#projectSelect {
+    appearance: none;
+    cursor: pointer;
+}
+
+#notesLabel {
+    grid-column: 1/3;
+    justify-self: center;
+}
+
+#notesInput {
+    grid-column: 1/3;
+    justify-self: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    resize: none;
+}
+
+#addTaskButtonDiv {
+    display: flex;
+    justify-content: flex-end;
+    grid-column: 1/3;
+    gap: 1rem;
+}
+
+#clearButton {
+    background-color: var(--clear-color);
+}
+
+#cancelButton {
+    background-color: var(--cancel-color);
 }
 
 #gridWrapper {

@@ -1,4 +1,7 @@
+import { differenceInISOWeekYears } from 'date-fns';
 import { storage } from './storage';
+import { TodoManager } from './todos';
+import { ProjectManager } from './projects';
 
 export const UI = {
     initialLoad() { // initial page load
@@ -16,8 +19,8 @@ export const UI = {
             this.loadAllTasks();
         });
 
+        storage.createDefaultProject();
         UI.loadProjectList();
-
         // only for development, will be removed
         UI.loadAllTasks();
         
@@ -86,6 +89,7 @@ export const UI = {
         let projects = Object.values(localStorage)
         projects.forEach(element => {
             let e = JSON.parse(element)
+            if (e.id == 'defaultProject') {return}
             const newProject = document.createElement('p');
             newProject.textContent = e.name;
             newProject.dataset.projectId = e.id;
@@ -98,6 +102,10 @@ export const UI = {
     },
     loadProjectPage(id) { // load a specific project's todos
         UI.clearMainPage();
+        if (id == 'defaultProject') {
+            this.loadAllTasks();
+            return;
+        }
         let projects = Object.values(localStorage);
         let todos = [];
         let projectName = "";
@@ -195,8 +203,207 @@ export const UI = {
         });
         gridElement.appendChild(deleteBtn);
     },
-    renderAddTaskPopUp() { // (WIP -> IMPLEMENT)
+    renderAddTaskPopUp(clickEvent) { // (WIP -> IMPLEMENT)
         UI.clearMainPage();
+        let projectId = clickEvent.target.dataset.projectId;
+        const mainpage = document.querySelector('#mainpage');
+        const taskPopUp = document.createElement('div');
+        taskPopUp.id = 'addTaskBackGround';
+        mainpage.appendChild(taskPopUp);
+
+        const addTaskTitle = document.createElement('h1');
+        addTaskTitle.textContent = 'add new task';
+        addTaskTitle.id = 'addTaskTitle';
+        taskPopUp.appendChild(addTaskTitle);
+
+        const popUpGrid = document.createElement('form');
+        popUpGrid.id = 'popUpGrid';
+        taskPopUp.appendChild(popUpGrid);
+
+        //render title input and label
+        const titleLabel = document.createElement('label');
+        titleLabel.textContent = 'Title';
+        titleLabel.htmlFor = 'titleInput';
+        titleLabel.id = 'titleLabel';
+        titleLabel.classList.add('taskLeftColumn');
+        const titleInput = document.createElement('input');
+        titleInput.type = 'text';
+        titleInput.id = 'titleInput';
+        titleInput.required = true;
+        titleInput.placeholder = 'Put your task title here...';
+        titleInput.classList.add('taskRightColumn');
+        titleInput.classList.add('textInput');
+        popUpGrid.appendChild(titleLabel);
+        popUpGrid.appendChild(titleInput);
+
+        // render description input and label
+        const descLabel = document.createElement('label');
+        descLabel.textContent = 'Short description';
+        descLabel.htmlFor = 'descInput';
+        descLabel.id = 'descLabel';
+        descLabel.classList.add('taskLeftColumn');
+        const descInput = document.createElement('input');
+        descInput.type = 'text';
+        descInput.id = 'descInput';
+        descInput.required = true;
+        descInput.placeholder = 'Write your short description here';
+        descInput.classList.add('taskRightColumn');
+        descInput.classList.add('textInput');
+        popUpGrid.appendChild(descLabel);
+        popUpGrid.appendChild(descInput);
+
+        // render duedate input and label
+        const dueDateLabel = document.createElement('label');
+        dueDateLabel.textContent = 'Due date';
+        dueDateLabel.htmlFor = 'dueDateInput';
+        dueDateLabel.id = 'dueDateLabel';
+        dueDateLabel.classList.add('taskLeftColumn');
+        const dueDateInput = document.createElement('input');
+        dueDateInput.type = 'date';
+        dueDateInput.id = 'dueDateInput';
+        dueDateInput.required = true;
+        dueDateInput.classList.add('taskRightColumn');
+        popUpGrid.appendChild(dueDateLabel);
+        popUpGrid.appendChild(dueDateInput);
+
+        (function renderPriorityInputs() {
+            // render priority inputs and labels
+            const priorityLabel = document.createElement('label');
+            priorityLabel.textContent = 'Priority';
+            priorityLabel.htmlFor = 'priorityInput';
+            priorityLabel.id = 'priorityLabel';
+            priorityLabel.classList.add('taskLeftColumn');
+
+            const priorityForm = document.createElement('div');
+            priorityForm.id = 'priorityDiv'
+
+            const priorityLow = document.createElement('div');
+            const priorityInputLow = document.createElement('input');
+            priorityInputLow.type = 'radio';
+            priorityInputLow.name = 'priority';
+            priorityInputLow.value = 'low';
+            priorityInputLow.id = 'priorityInputLow';
+            priorityInputLow.classList.add('taskRightColumn');
+            const priorityInputLowLabel = document.createElement('label');
+            priorityInputLowLabel.htmlFor = 'priorityInputLow';
+            priorityInputLowLabel.textContent = 'low';
+
+            const priorityMed = document.createElement('div');
+            const priorityInputMed = document.createElement('input');
+            priorityInputMed.type = 'radio';
+            priorityInputMed.name = 'priority';
+            priorityInputMed.value = 'med';
+            priorityInputMed.id = 'priorityInputMed';
+            priorityInputMed.classList.add('taskRightColumn');
+            const priorityInputMedLabel = document.createElement('label');
+            priorityInputMedLabel.htmlFor = 'priorityInputMed';
+            priorityInputMedLabel.textContent = 'medium';
+
+            const priorityHigh = document.createElement('div');
+            const priorityInputHi = document.createElement('input');
+            priorityInputHi.type = 'radio';
+            priorityInputHi.name = 'priority';
+            priorityInputHi.value = 'hi';
+            priorityInputHi.id = 'priorityInputHi';
+            priorityInputHi.classList.add('taskRightColumn');
+            const priorityInputHiLabel = document.createElement('label');
+            priorityInputHiLabel.htmlFor = 'priorityInputHi';
+            priorityInputHiLabel.textContent = 'high';
+
+            popUpGrid.appendChild(priorityLabel);
+            popUpGrid.appendChild(priorityForm);
+            priorityLow.appendChild(priorityInputLow);
+            priorityLow.appendChild(priorityInputLowLabel);
+            priorityForm.appendChild(priorityLow);
+            priorityMed.appendChild(priorityInputMed);
+            priorityMed.appendChild(priorityInputMedLabel);
+            priorityForm.appendChild(priorityMed);
+            priorityHigh.appendChild(priorityInputHi);
+            priorityHigh.appendChild(priorityInputHiLabel);
+            priorityForm.appendChild(priorityHigh);
+        })();
+
+        // render project choice 
+        const projectLabel = document.createElement('label');
+        projectLabel.textContent = 'Project';
+        projectLabel.id = 'projectLabel';
+        projectLabel.classList.add('taskLeftColumn')
+        popUpGrid.appendChild(projectLabel);
+
+        const projectSelect = document.createElement('select');
+        projectSelect.name = 'projects';
+        projectSelect.id = 'projectSelect';
+        popUpGrid.appendChild(projectSelect);
+
+        let newProject = document.createElement('option');
+        newProject.textContent = 'No Project (only visible in all tasks)';
+        newProject.value = 'defaultProject';
+        projectSelect.appendChild(newProject);
+
+        let projects = Object.values(localStorage)
+        projects.forEach(element => {
+            let e = JSON.parse(element)
+            if (e.id == 'defaultProject') {return}
+            newProject = document.createElement('option');
+            newProject.textContent = e.name;
+            newProject.value = e.id;
+            if (e.id == projectId) {
+                newProject.selected = 'selected';
+            }
+            projectSelect.appendChild(newProject);
+        });
+
+        // render notes
+        const notesLabel = document.createElement('label');
+        notesLabel.textContent = 'Notes';
+        notesLabel.htmlFor = 'notesInput';
+        notesLabel.id = 'notesLabel';
+        notesLabel.classList.add('taskLeftColumn');
+        const notesInput = document.createElement('textArea');
+        notesInput.id = 'notesInput';
+        notesInput.required = false;
+        notesInput.placeholder = 'Write your notes here';
+        notesInput.classList.add('textInput');
+        popUpGrid.appendChild(notesLabel);
+        popUpGrid.appendChild(notesInput);
+
+
+        //render buttons
+        //render button div
+        const addTaskButtonDiv = document.createElement('div');
+        addTaskButtonDiv.id = 'addTaskButtonDiv';
+        popUpGrid.appendChild(addTaskButtonDiv);
+        //clear button
+        const clearButton = document.createElement('input');
+        clearButton.type = 'reset';
+        clearButton.value = 'CLEAR';
+        clearButton.id = 'clearButton'
+        clearButton.classList.add('button');
+        clearButton.classList.add('greenBtn');
+        addTaskButtonDiv.appendChild(clearButton);
+        //cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'CANCEL';
+        cancelButton.id = 'cancelButton'
+        cancelButton.classList.add('button');
+        cancelButton.classList.add('greenBtn');
+        cancelButton.addEventListener('click', () => {
+            this.loadProjectPage(projectId)
+        });
+        addTaskButtonDiv.appendChild(cancelButton);
+        //cancel button
+        const addTaskButton = document.createElement('button');
+        addTaskButton.textContent = 'ADD TASK';
+        addTaskButton.id = 'addTaskButtonOnPopUp'
+        addTaskButton.classList.add('button');
+        addTaskButton.classList.add('greenBtn');
+        addTaskButton.type = 'button';
+        addTaskButton.addEventListener('click', () => {
+            if (document.forms.popUpGrid.checkValidity()) {
+                this.handleAddTask(document.forms.popUpGrid);
+            }
+        });
+        addTaskButtonDiv.appendChild(addTaskButton);
     },
     clearMainPage() { // clears the main page
         const mainpage = document.getElementById('mainpage');
@@ -227,10 +434,14 @@ export const UI = {
             addTaskButton.classList.add('greenBtn');
             addTaskButton.id = 'addTask';
             addTaskButton.textContent = 'Add Task';
-            addTaskButton.dataset.projectId = projectId;
-            addTaskButton.onclick = () => {UI.renderAddTaskPopUp()};
+            if (projectId !== null) {
+                addTaskButton.dataset.projectId = projectId;
+            } else {
+                addTaskButton.dataset.projectId = 'defaultProject';
+            }
+            addTaskButton.onclick = (e) => {UI.renderAddTaskPopUp(e)};
             buttonDiv.appendChild(addTaskButton);
-        }
+        };
         if (buttonDiv.classList.contains('projectPage')) {
             const editProjectButton = document.createElement('button');
             editProjectButton.classList.add('projectBtn');
@@ -296,5 +507,24 @@ export const UI = {
     },
     showProjectDescription () { // (WIP -> IMPLEMENT)
 
+    },
+    handleAddTask(form) {
+        let todoTitle = form.titleInput.value;
+        let todoDescription = form.descInput.value;
+        let todoDueDate = form.dueDateInput.value;
+        let todoPriority = "";
+        let priorityRadios = form.priority;
+        priorityRadios.forEach(e => {
+            if (e.checked) {
+                todoPriority = e.value;
+            }
+        })
+        let todoNotes = form.notesInput.value;
+        let projectId = form.projectSelect.value;
+        let oldProject = storage.getProject(projectId);
+        let newTodo = TodoManager.createTodo(todoTitle, todoDueDate, projectId, todoDescription, todoPriority, todoNotes);
+        oldProject.todos.push(newTodo);
+        ProjectManager.createProject(oldProject.name, oldProject.notes, oldProject.id, oldProject.todos);
+        this.loadProjectPage(projectId)
     },
 };
