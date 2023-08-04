@@ -16,7 +16,7 @@ const storage = {
         storage.saveProject(freshProject)
     },
     deleteProject (projectId) { // (WIP -> IMPLEMENT)
-
+        localStorage.removeItem(projectId);
     },
     createDefaultProject() {
         if (Object.keys(localStorage).includes('"defaultProject"')) {
@@ -37,6 +37,16 @@ const storage = {
         }
         return project;
     },
+    getTodo(id, projectId) {
+        let project = this.getProject(projectId);
+        let todo = null;
+        project.todos.forEach((e) => {
+            if (e.id == id) {
+                todo = e;
+            }
+        })
+        return todo;
+    }
 }
 
 export {storage};

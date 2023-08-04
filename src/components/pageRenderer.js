@@ -1,4 +1,4 @@
-import { differenceInISOWeekYears } from 'date-fns';
+import { parseISO, format, differenceInISOWeekYears } from 'date-fns';
 import { storage } from './storage';
 import { TodoManager } from './todos';
 import { ProjectManager } from './projects';
@@ -139,22 +139,55 @@ export const UI = {
         })
     },
     handleEdit(e) { // (WIP -> IMPLEMENT) handles edit button press
-        alert('please implement edit functionality');
-        console.log(e);
+        this.renderAddTaskPopUp(e);
+        // initialise fields
+        const todoTitle = document.getElementById('addTaskTitle');
+        const titleInput = document.getElementById('titleInput');
+        const descInput = document.getElementById('descInput');
+        const dueDateInput = document.getElementById('dueDateInput');
+        const addTaskButton = document.getElementById('addTaskButtonOnPopUp');
+        /// DO PRIORITY !!!!!!
+        const priorityInputLow = document.getElementById('priorityInputLow');
+        const priorityInputMed = document.getElementById('priorityInputMed');
+        const priorityInputHigh = document.getElementById('priorityInputHi');
+        /// do something about the project dropdown
+        const notesInput = document.getElementById('notesInput');
+        // fill the popup with data from localstorage for the todo
+        let projectId = e.target.dataset.projectId;
+        let todoId = e.target.dataset.todoId;
+        let todo = storage.getTodo(todoId, projectId);
+        todoTitle.textContent = `Editing ${todo.title}`;
+        titleInput.value = todo.title;
+        descInput.value = todo.description;
+        dueDateInput.value = todo.dueDate;
+        notesInput.value = todo.notes;
+        // priority
+        if (todo.priority == 'low') {
+            priorityInputLow.checked = true;
+        } else if (todo.priority == 'hi') {
+            priorityInputHigh.checked = true;
+        } else if (todo.priority == 'med'){
+            priorityInputMed.checked = true;
+        }
+        const buttonDiv = document.getElementById('addTaskButtonDiv');
+        const saveEditButton = document.createElement('button');
+        saveEditButton.textContent = 'SAVE EDIT';
+        saveEditButton.id = 'saveEditTaskButton'
+        saveEditButton.classList.add('button');
+        saveEditButton.classList.add('greenBtn');
+        saveEditButton.type = 'button';
+        saveEditButton.addEventListener('click', handleSaveClick, false);
+        function handleSaveClick() {
+            if (document.forms.popUpGrid.checkValidity()) {
+                UI.handleSaveTaskEdit(document.forms.popUpGrid, projectId, todoId);
+            }
+        }
+        buttonDiv.removeChild(addTaskButton);
+        buttonDiv.appendChild(saveEditButton);
     },
-    handleDelete(todoId, projectId) { // handles the delete button press
+    handleDelete(todoId, projectId) { // !!WIP!! handles the delete button press
         storage.deleteTodo(todoId, projectId);
         this.loadAllTasks(); // replace with logic to decide whether it's all tasks, project or today / this week view
-    },
-    clearGrid() { //clears the grid except for the first (title) row
-        let gridChildren = document.querySelectorAll('.gridElement');
-        gridChildren.forEach(e => { // remove all rows except for the title row
-            if (e.classList.contains('titleRow')) {
-                return;
-            } else {
-                gridWrapper.removeChild(e)
-            }
-        })
     },
     loadTask(e) { //loads one specific task to the grid (called in a loop)
         let gridElement = document.createElement('div');
@@ -206,19 +239,7 @@ export const UI = {
     renderAddTaskPopUp(clickEvent) { // (WIP -> IMPLEMENT)
         UI.clearMainPage();
         let projectId = clickEvent.target.dataset.projectId;
-        const mainpage = document.querySelector('#mainpage');
-        const taskPopUp = document.createElement('div');
-        taskPopUp.id = 'addTaskBackGround';
-        mainpage.appendChild(taskPopUp);
-
-        const addTaskTitle = document.createElement('h1');
-        addTaskTitle.textContent = 'add new task';
-        addTaskTitle.id = 'addTaskTitle';
-        taskPopUp.appendChild(addTaskTitle);
-
-        const popUpGrid = document.createElement('form');
-        popUpGrid.id = 'popUpGrid';
-        taskPopUp.appendChild(popUpGrid);
+        UI.renderPopUp();
 
         //render title input and label
         const titleLabel = document.createElement('label');
@@ -398,12 +419,28 @@ export const UI = {
         addTaskButton.classList.add('button');
         addTaskButton.classList.add('greenBtn');
         addTaskButton.type = 'button';
-        addTaskButton.addEventListener('click', () => {
+        addTaskButton.addEventListener('click', handleAddTaskClick, false);
+        function handleAddTaskClick() {
             if (document.forms.popUpGrid.checkValidity()) {
-                this.handleAddTask(document.forms.popUpGrid);
+                UI.handleAddTask(document.forms.popUpGrid);
             }
-        });
+        }
         addTaskButtonDiv.appendChild(addTaskButton);
+    },
+    renderPopUp() {
+        const mainpage = document.querySelector('#mainpage');
+        const taskPopUp = document.createElement('div');
+        taskPopUp.id = 'addTaskBackGround';
+        mainpage.appendChild(taskPopUp);
+
+        const addTaskTitle = document.createElement('h1');
+        addTaskTitle.textContent = 'add new task';
+        addTaskTitle.id = 'addTaskTitle';
+        taskPopUp.appendChild(addTaskTitle);
+
+        const popUpGrid = document.createElement('form');
+        popUpGrid.id = 'popUpGrid';
+        taskPopUp.appendChild(popUpGrid);
     },
     clearMainPage() { // clears the main page
         const mainpage = document.getElementById('mainpage');
@@ -525,6 +562,26 @@ export const UI = {
         let newTodo = TodoManager.createTodo(todoTitle, todoDueDate, projectId, todoDescription, todoPriority, todoNotes);
         oldProject.todos.push(newTodo);
         ProjectManager.createProject(oldProject.name, oldProject.notes, oldProject.id, oldProject.todos);
+        this.loadProjectPage(projectId)
+    },
+    handleSaveTaskEdit(form, projectId, todoId) {
+        console.log('hi')
+        let todoTitle = form.titleInput.value;
+        let todoDescription = form.descInput.value;
+        let todoDueDate = form.dueDateInput.value;
+        let todoPriority = "";
+        let priorityRadios = form.priority;
+        priorityRadios.forEach(e => {
+            if (e.checked) {
+                todoPriority = e.value;
+            }
+        })
+        let todoNotes = form.notesInput.value;
+        let oldProject = storage.getProject(projectId);
+        let newTodo = TodoManager.createTodo(todoTitle, todoDueDate, projectId, todoDescription, todoPriority, todoNotes);
+        oldProject.todos.push(newTodo);
+        ProjectManager.createProject(oldProject.name, oldProject.notes, oldProject.id, oldProject.todos);
+        storage.deleteTodo(todoId, projectId);
         this.loadProjectPage(projectId)
     },
 };
