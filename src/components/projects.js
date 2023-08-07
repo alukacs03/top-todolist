@@ -10,6 +10,9 @@ class Project {
         //automatically add project to localStorage
         storage.saveProject(this);
     };
+    getId () {
+        return this.id;
+    }
     getName () {
         return this.name;
     };

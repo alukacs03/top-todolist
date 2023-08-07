@@ -86,7 +86,14 @@ export const UI = {
     },
     loadProjectList() { // loads the projects list on the sidebar
         const projectElementWrapper = document.getElementById('projectElementWrapper');
+        projectElementWrapper.innerHTML = '';
         let projects = Object.values(localStorage)
+        let newProjectButton = document.createElement('p');
+        newProjectButton.id = 'newProjectButton';
+        newProjectButton.textContent = '+ Create New Project';
+        newProjectButton.classList.add('projectElement');
+        newProjectButton.addEventListener('click', this.handleNewProjectButton);
+        projectElementWrapper.appendChild(newProjectButton);
         projects.forEach(element => {
             let e = JSON.parse(element)
             if (e.id == 'defaultProject') {return}
@@ -138,7 +145,7 @@ export const UI = {
             })
         })
     },
-    handleEdit(e) { // (WIP -> IMPLEMENT) handles edit button press
+    handleEdit(e) { // handles edit button press
         this.renderAddTaskPopUp(e);
         // initialise fields
         const todoTitle = document.getElementById('addTaskTitle');
@@ -584,4 +591,79 @@ export const UI = {
         storage.deleteTodo(todoId, projectId);
         this.loadProjectPage(projectId)
     },
+    handleNewProjectButton() {
+        UI.clearMainPage();
+        UI.renderPopUp();
+        const todoTitle = document.getElementById('addTaskTitle');
+        const popUpGrid = document.getElementById('popUpGrid');
+        popUpGrid.id = 'projectPopUpGrid';
+        todoTitle.textContent = 'Create New Project';
+        const nameLabel = document.createElement('label');
+        nameLabel.textContent = 'Name';
+        nameLabel.htmlFor = 'nameInput';
+        popUpGrid.appendChild(nameLabel);
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.placeholder = 'Type your project name here...';
+        nameInput.id = 'nameInput';
+        nameInput.required = true;
+        nameInput.classList.add('taskRightColumn');
+        nameInput.classList.add('textInput');
+        popUpGrid.appendChild(nameInput);
+
+        const notesLabel = document.createElement('label');
+        notesLabel.textContent = 'Project Description';
+        notesLabel.htmlFor = 'notesInput';
+        notesLabel.id = 'notesLabel';
+        popUpGrid.appendChild(notesLabel);
+        const notesInput = document.createElement('textArea');
+        notesInput.placeholder = 'Type a short project description here...';
+        notesInput.id = 'notesInput';
+        notesInput.classList.add('textInput');
+        popUpGrid.appendChild(notesInput);
+
+        const addTaskButtonDiv = document.createElement('div');
+        addTaskButtonDiv.id = 'addTaskButtonDiv';
+        popUpGrid.appendChild(addTaskButtonDiv);
+        //clear button
+        const clearButton = document.createElement('input');
+        clearButton.type = 'reset';
+        clearButton.value = 'CLEAR';
+        clearButton.id = 'clearButton'
+        clearButton.classList.add('button');
+        clearButton.classList.add('greenBtn');
+        addTaskButtonDiv.appendChild(clearButton);
+        //cancel button
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'CANCEL';
+        cancelButton.id = 'cancelButton'
+        cancelButton.classList.add('button');
+        cancelButton.classList.add('greenBtn');
+        cancelButton.addEventListener('click', () => {
+            UI.loadAllTasks();
+        });
+        addTaskButtonDiv.appendChild(cancelButton);
+        //cancel button
+        const createProjectButtonOnPopUp = document.createElement('button');
+        createProjectButtonOnPopUp.textContent = 'CREATE PROJECT';
+        createProjectButtonOnPopUp.id = 'createProjectButtonOnPopUp'
+        createProjectButtonOnPopUp.classList.add('button');
+        createProjectButtonOnPopUp.classList.add('greenBtn');
+        createProjectButtonOnPopUp.type = 'button';
+        createProjectButtonOnPopUp.addEventListener('click', handleCreateProjectClick, false);
+        function handleCreateProjectClick() {
+            if (document.forms.projectPopUpGrid.checkValidity()) {
+                UI.handleCreateProject(document.forms.projectPopUpGrid);
+            }
+        }
+        addTaskButtonDiv.appendChild(createProjectButtonOnPopUp);
+    },
+    handleCreateProject(form) {
+        console.log(form);
+        let projectName = form.nameInput.value;
+        let projectNotes = form.notesInput.value;
+        let project = ProjectManager.createProject(projectName, projectNotes);
+        this.loadProjectList();
+        this.loadProjectPage(project.id)
+    }
 };

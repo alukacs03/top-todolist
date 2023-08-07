@@ -115,7 +115,7 @@ html, body {
     box-sizing: content-box;
 }
 
-#popUpGrid {
+#popUpGrid, #projectPopUpGrid {
     width: 100%;
     height: 100%;
     display: grid;
@@ -126,6 +126,11 @@ html, body {
     box-sizing: border-box;
     padding: 1rem;
     gap: 1rem;
+}
+
+#projectPopUpGrid {
+    grid-template-rows: 1fr 1fr 12fr 2fr;
+    grid-template-columns: min-content auto;
 }
 
 #addTaskTitle {
