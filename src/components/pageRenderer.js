@@ -1,4 +1,4 @@
-import { parseISO, format, differenceInISOWeekYears } from 'date-fns';
+import { parseISO, format, isSameWeek } from 'date-fns';
 import { storage } from './storage';
 import { TodoManager } from './todos';
 import { ProjectManager } from './projects';
@@ -18,6 +18,16 @@ export const UI = {
         homeBtn.addEventListener('click', () => {
             this.loadAllTasks();
         });
+
+        const todayBtn = document.getElementById('todayBtn');
+        todayBtn.addEventListener('click', () => {
+            this.loadTodaysTasks();
+        })
+
+        const thisWeekBtn = document.getElementById('thisWeekBtn');
+        thisWeekBtn.addEventListener('click', () => {
+            this.loadThisWeeksTasks();
+        })
 
         storage.createDefaultProject();
         UI.loadProjectList();
@@ -97,6 +107,9 @@ export const UI = {
         projects.forEach(element => {
             let e = JSON.parse(element)
             if (e.id == 'defaultProject') {return}
+            const projectListDiv = document.createElement('div');
+            projectListDiv.classList.add('projectListDiv');
+            projectElementWrapper.appendChild(projectListDiv);
             const newProject = document.createElement('p');
             newProject.textContent = e.name;
             newProject.dataset.projectId = e.id;
@@ -104,7 +117,14 @@ export const UI = {
                 UI.loadProjectPage(e.id);
             })
             newProject.classList.add('projectElement');
-            projectElementWrapper.appendChild(newProject);
+            const deleteImage = document.createElement('img');
+            deleteImage.src = '../src/images/delete.svg';
+            deleteImage.classList.add('deleteImage');
+            deleteImage.addEventListener('click', () => {
+                UI.handleProjectDelete(e.id);
+            })
+            projectListDiv.appendChild(newProject);
+            projectListDiv.appendChild(deleteImage);
         });
     },
     loadProjectPage(id) { // load a specific project's todos
@@ -129,6 +149,16 @@ export const UI = {
                 this.loadTask(e);
             })
         })
+        const editProjectButton = document.getElementById('editProject');
+        editProjectButton.addEventListener('click', handleEditProjectClick, false);
+        function handleEditProjectClick(e) {
+            UI.handleEditProject(e.target.dataset.projectId);
+        }
+        const projectDescriptionButton = document.getElementById('projectDescription');
+        projectDescriptionButton.addEventListener('click', handleProjectDescriptionClick, false);
+        function handleProjectDescriptionClick(e) {
+            UI.showProjectDescription(e.target.dataset.projectId);
+        }
     },
     loadAllTasks() { // loads all tasks to the grid from all projects
         UI.clearMainPage();
@@ -142,6 +172,83 @@ export const UI = {
         todos.forEach(element => { //render the rows
             element.forEach(e => {
                 this.loadTask(e);
+            })
+        })
+    },
+    createPageLayout() {
+            const mainpage = document.getElementById('mainpage');
+            const mainTitle = document.createElement('h1');
+            mainTitle.id = 'mainTitle';
+            mainpage.appendChild(mainTitle);
+            const gridWrapper = document.createElement('div');
+            gridWrapper.id = 'gridWrapper';
+            mainpage.appendChild(gridWrapper);
+            const gridFirstRow = document.createElement('div');
+            gridFirstRow.classList.add('gridElement');
+            gridFirstRow.classList.add('titleRow');
+            gridWrapper.appendChild(gridFirstRow);
+            const checkBoxColumn = document.createElement('div');
+            checkBoxColumn.classList.add('gridTextElement');
+            gridFirstRow.appendChild(checkBoxColumn);
+            const titleColumn = document.createElement('div');
+            titleColumn.classList.add('gridTextElement');
+            titleColumn.textContent = 'title';
+            gridFirstRow.appendChild(titleColumn);
+            const descriptionColumn = document.createElement('div');
+            descriptionColumn.classList.add('gridTextElement');
+            descriptionColumn.textContent = 'description';
+            gridFirstRow.appendChild(descriptionColumn);
+            const dueDateColumn = document.createElement('div');
+            dueDateColumn.classList.add('gridTextElement');
+            dueDateColumn.textContent = 'due date';
+            gridFirstRow.appendChild(dueDateColumn);
+            const priorityColumn = document.createElement('div');
+            priorityColumn.classList.add('gridTextElement');
+            priorityColumn.textContent = 'priority';
+            gridFirstRow.appendChild(priorityColumn);
+            const notesColumn = document.createElement('div');
+            notesColumn.classList.add('gridTextElement');
+            notesColumn.textContent = 'notes';
+            gridFirstRow.appendChild(notesColumn);
+            const editColumn = document.createElement('div');
+            editColumn.classList.add('gridTextElement');
+            editColumn.textContent = 'edit';
+            gridFirstRow.appendChild(editColumn);
+            const deleteColumn = document.createElement('div');
+            deleteColumn.classList.add('gridTextElement');
+            deleteColumn.textContent = 'delete';
+            gridFirstRow.appendChild(deleteColumn);
+    },
+    loadTodaysTasks() {
+        UI.clearMainPage();
+        UI.createPageLayout();
+        const mainTitle = document.getElementById('mainTitle');
+        mainTitle.textContent = "Today's tasks";
+        let projects = Object.values(localStorage);
+        const todaysDate = format(new Date(), 'yyyy-MM-dd')
+        projects.forEach((element) => {
+            let e = JSON.parse(element);
+            e.todos.forEach((todo) => {
+                if (todo.dueDate == todaysDate) {
+                    this.loadTask(todo);
+                }
+            })
+        })
+    },
+    loadThisWeeksTasks() {
+        UI.clearMainPage();
+        UI.createPageLayout();
+        const mainTitle = document.getElementById('mainTitle');
+        mainTitle.textContent = "This week's tasks";
+        let projects = Object.values(localStorage);
+        const todaysDate = format(new Date(), 'yyyy-MM-dd')
+        projects.forEach((element) => {
+            let e = JSON.parse(element);
+            e.todos.forEach((todo) => {
+                console.log(todo.dueDate, todaysDate);
+                if (isSameWeek(parseISO(todaysDate), parseISO(todo.dueDate))) {
+                    this.loadTask(todo);
+                }
             })
         })
     },
@@ -546,12 +653,6 @@ export const UI = {
         deleteColumn.textContent = 'delete';
         gridFirstRow.appendChild(deleteColumn);
     },
-    handleProjectEdit() { // (WIP -> IMPLEMENT)
-
-    },
-    showProjectDescription () { // (WIP -> IMPLEMENT)
-
-    },
     handleAddTask(form) {
         let todoTitle = form.titleInput.value;
         let todoDescription = form.descInput.value;
@@ -665,5 +766,144 @@ export const UI = {
         let project = ProjectManager.createProject(projectName, projectNotes);
         this.loadProjectList();
         this.loadProjectPage(project.id)
-    }
+    },
+    showProjectDescription(projectId) {
+        let popUps = document.querySelectorAll('.popup')
+        console.log(popUps)
+        if (popUps.length < 1) {
+            const mainPage = document.getElementById('mainpage')
+            const project = storage.getProject(projectId);
+            const description = project.notes;
+            const taskPopUp = document.createElement('div');
+            taskPopUp.id = 'descriptionPopUp';
+            taskPopUp.classList.add('popup')
+            mainPage.appendChild(taskPopUp);
+    
+            const addTaskTitle = document.createElement('h1');
+            addTaskTitle.textContent = `${project.name} description`;
+            addTaskTitle.id = 'projectDescriptionTitle';
+            taskPopUp.appendChild(addTaskTitle);
+    
+            const popUpGrid = document.createElement('div');
+            popUpGrid.id = 'descriptionPopUpGrid';
+            taskPopUp.appendChild(popUpGrid);
+            
+            const notesInput = document.createElement('textArea');
+            notesInput.value = project.notes;
+            notesInput.id = 'notesInput';
+            notesInput.classList.add('textInput');
+            notesInput.disabled = true;
+            popUpGrid.appendChild(notesInput);
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'CLOSE';
+            closeButton.id = 'cancelButton'
+            closeButton.classList.add('button');
+            closeButton.classList.add('greenBtn');
+            closeButton.addEventListener('click', () => {
+                mainPage.removeChild(taskPopUp);
+            });
+            taskPopUp.appendChild(closeButton);
+        }
+    },
+    handleEditProject(projectId) {
+        let project = storage.getProject(projectId);
+        UI.handleNewProjectButton();
+        const title = document.getElementById('addTaskTitle');
+        title.textContent = `Edit '${project.name}'`;
+        const nameInput = document.getElementById('nameInput');
+        nameInput.value = project.name;
+        const notesInput = document.getElementById('notesInput');
+        notesInput.value = project.notes;
+        const cancelButton = document.getElementById('cancelButton');
+        const createButton = document.getElementById('createProjectButtonOnPopUp')
+        const buttonDiv = document.getElementById('addTaskButtonDiv');
+        buttonDiv.removeChild(createButton);
+        const editProjectButtonOnPopUp = document.createElement('button');
+        editProjectButtonOnPopUp.textContent = 'SAVE EDIT';
+        editProjectButtonOnPopUp.id = 'createProjectButtonOnPopUp'
+        editProjectButtonOnPopUp.classList.add('button');
+        editProjectButtonOnPopUp.classList.add('greenBtn');
+        editProjectButtonOnPopUp.type = 'button';
+        editProjectButtonOnPopUp.addEventListener('click', handleEditProjectClick, false);
+        function handleEditProjectClick() {
+            if (document.forms.projectPopUpGrid.checkValidity()) {
+                UI.saveProjectEdit(document.forms.projectPopUpGrid, Number(projectId));
+            }
+        }
+        addTaskButtonDiv.appendChild(editProjectButtonOnPopUp);
+    },
+    saveProjectEdit(form, projectId) {
+        let projectName = form.nameInput.value;
+        let projectNotes = form.notesInput.value;
+        let oldProject = storage.getProject(projectId);
+        let todos = oldProject.todos;
+        storage.deleteProject(projectId);
+        ProjectManager.createProject(projectName, projectNotes, projectId, todos);
+        this.loadProjectPage(projectId);
+        this.loadProjectList();
+    },
+    handleProjectDelete(projectId) {
+        let popUps = document.querySelectorAll('.popup')
+        if (popUps.length < 1) {
+            const mainPage = document.getElementById('mainpage')
+            const project = storage.getProject(projectId);
+            const taskPopUp = document.createElement('div');
+            taskPopUp.id = 'deletePopUp';
+            taskPopUp.classList.add('popup')
+            mainPage.appendChild(taskPopUp);
+    
+            const addTaskTitle = document.createElement('h1');
+            addTaskTitle.textContent = `Are you sure you want to delete the project '${project.name}'?`;
+            addTaskTitle.id = 'deleteTitle';
+            taskPopUp.appendChild(addTaskTitle);
+
+            const confirmationText = document.createElement('p');
+            confirmationText.textContent = `To delete the project, enter '${project.name}' in the field below and press 'DELETE'`
+            taskPopUp.appendChild(confirmationText);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.id = 'deleteButton'
+            deleteButton.classList.add('button');
+            deleteButton.classList.add('greenBtn');
+            deleteButton.classList.add('redBtn');
+            deleteButton.addEventListener('click', () => {
+                if(nameInput.value == project.name) {
+                    storage.deleteProject(projectId);
+                    UI.loadProjectList();
+                    UI.loadAllTasks();
+                } else {
+                    if (document.getElementById('notMatch') == null) {
+                        console.log(document.getElementById('notMatch'))
+                        let notMatch = document.createElement('span');
+                        notMatch.id = 'notMatch';
+                        notMatch.textContent = 'The confirmation text does not match the project name!'
+                        nameInput.after(notMatch);
+                    } else {
+                        return
+                    }
+                };
+            });
+            taskPopUp.appendChild(deleteButton);
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = 'deleteNameInput';
+            nameInput.classList.add('textInput')
+            taskPopUp.appendChild(nameInput);
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'CLOSE';
+            closeButton.id = 'closeButton'
+            closeButton.classList.add('button');
+            closeButton.classList.add('greenBtn');
+            closeButton.classList.add('redBtn');
+            closeButton.addEventListener('click', () => {
+                mainPage.removeChild(taskPopUp);
+            });
+            taskPopUp.appendChild(closeButton);
+            
+
+        }
+    },
 };
