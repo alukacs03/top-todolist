@@ -2,38 +2,95 @@ import { parseISO, format, isSameWeek } from 'date-fns';
 import { storage } from './storage';
 import { TodoManager } from './todos';
 import { ProjectManager } from './projects';
+import DeleteImage from '../images/delete.svg';
+import Arrow from '../images/arrow.svg';
 
 export const UI = {
     initialLoad() { // initial page load
-        const hideButton = document.querySelector('#sideBarCloserBtn');
-        hideButton.addEventListener('click', UI.toggleSidebar);
+        storage.createDefaultProject();
+        UI.loadSideBar();
+        UI.loadProjectList();
+        UI.loadAllTasks();
+        
+    },
+    loadSideBar() {
+        const content = document.getElementById('content');
+        const sideBarDiv = document.createElement('div');
+        sideBarDiv.id = 'sidebar';
+        content.prepend(sideBarDiv);
 
-        const projectToggleText = document.getElementById('projectsBtn');
-        const projectToggleBtn = document.getElementById('projectsArrow');
+        const title = document.createElement('h1');
+        title.id = 'title';
+        title.textContent = 'TASKMASTER';
+        sideBarDiv.appendChild(title);
 
-        projectToggleText.addEventListener('click', UI.toggleProjectList);
-        projectToggleBtn.addEventListener('click', UI.toggleProjectList);
-
-        const homeBtn = document.getElementById('homeBtn');
+        const homeBtn = document.createElement('h3');
+        homeBtn.id = 'homeBtn';
+        homeBtn.textContent = 'Home';
+        homeBtn.classList.add('sidebarElement');
         homeBtn.addEventListener('click', () => {
             this.loadAllTasks();
         });
+        sideBarDiv.appendChild(homeBtn);
 
-        const todayBtn = document.getElementById('todayBtn');
+        const todayBtn = document.createElement('h3');
+        todayBtn.id = 'todayBtn';
+        todayBtn.textContent = 'Today';
+        todayBtn.classList.add('sidebarElement');
         todayBtn.addEventListener('click', () => {
             this.loadTodaysTasks();
         })
+        sideBarDiv.appendChild(todayBtn);
 
-        const thisWeekBtn = document.getElementById('thisWeekBtn');
+        const thisWeekBtn = document.createElement('h3');
+        thisWeekBtn.id = 'thisWeekBtn';
+        thisWeekBtn.textContent = 'This week';
+        thisWeekBtn.classList.add('sidebarElement');
         thisWeekBtn.addEventListener('click', () => {
             this.loadThisWeeksTasks();
         })
+        sideBarDiv.appendChild(thisWeekBtn);
 
-        storage.createDefaultProject();
-        UI.loadProjectList();
-        // only for development, will be removed
-        UI.loadAllTasks();
-        
+        const projectsWrapper = document.createElement('div');
+        projectsWrapper.id = 'projectsWrapper';
+        sideBarDiv.appendChild(projectsWrapper);
+
+        const projectsBtn = document.createElement('h3');
+        projectsBtn.id = 'projectsBtn';
+        projectsBtn.textContent = 'Projects';
+        projectsBtn.classList.add('sidebarElement');
+        projectsBtn.addEventListener('click', () => {
+            UI.toggleProjectList();
+        })
+        projectsWrapper.appendChild(projectsBtn);
+
+        const projectsArrow = document.createElement('img');
+        projectsArrow.id = 'projectsArrow';
+        projectsArrow.classList.add('arrow');
+        projectsArrow.classList.add('up');
+        projectsArrow.src = Arrow;
+        projectsArrow.alt = '';
+        projectsArrow.addEventListener('click', () => {
+            UI.toggleProjectList();
+        });
+        projectsWrapper.appendChild(projectsArrow);
+
+        const projectElementWrapper = document.createElement('div');
+        projectElementWrapper.id = 'projectElementWrapper';
+        sideBarDiv.appendChild(projectElementWrapper);
+        const sideBarCloserBtn = document.createElement('div');
+        sideBarCloserBtn.id = 'sideBarCloserBtn';
+        sideBarDiv.appendChild(sideBarCloserBtn);
+        const closerArrow = document.createElement('img');
+        closerArrow.classList.add('arrow');
+        closerArrow.classList.add('left');
+        closerArrow.src = Arrow;
+        closerArrow.alt = '';
+        closerArrow.addEventListener('click', () => {
+            UI.toggleSidebar();
+        });
+        sideBarCloserBtn.appendChild(closerArrow);
+
     },
     toggleSidebar() { // toggles the sidebar
         const sideBar = document.getElementById('sidebar');
@@ -118,8 +175,9 @@ export const UI = {
             })
             newProject.classList.add('projectElement');
             const deleteImage = document.createElement('img');
-            deleteImage.src = '../src/images/delete.svg';
+            deleteImage.src = DeleteImage;
             deleteImage.classList.add('deleteImage');
+            deleteImage.classList.add('projectElement');
             deleteImage.addEventListener('click', () => {
                 UI.handleProjectDelete(e.id);
             })
@@ -258,7 +316,6 @@ export const UI = {
         projects.forEach((element) => {
             let e = JSON.parse(element);
             e.todos.forEach((todo) => {
-                console.log(todo.dueDate, todaysDate);
                 if (isSameWeek(parseISO(todaysDate), parseISO(todo.dueDate))) {
                     this.loadTask(todo);
                 }
@@ -699,7 +756,6 @@ export const UI = {
         this.loadProjectPage(projectId)
     },
     handleSaveTaskEdit(form, projectId, todoId) {
-        console.log('hi')
         let todoTitle = form.titleInput.value;
         let todoDescription = form.descInput.value;
         let todoDueDate = form.dueDateInput.value;
@@ -787,7 +843,6 @@ export const UI = {
         addTaskButtonDiv.appendChild(createProjectButtonOnPopUp);
     },
     handleCreateProject(form) {
-        console.log(form);
         let projectName = form.nameInput.value;
         let projectNotes = form.notesInput.value;
         let project = ProjectManager.createProject(projectName, projectNotes);
@@ -796,7 +851,6 @@ export const UI = {
     },
     showProjectDescription(projectId) {
         let popUps = document.querySelectorAll('.popup')
-        console.log(popUps)
         if (popUps.length < 1) {
             const mainPage = document.getElementById('mainpage')
             const project = storage.getProject(projectId);
@@ -916,7 +970,6 @@ export const UI = {
                     UI.loadAllTasks();
                 } else {
                     if (document.getElementById('notMatch') == null) {
-                        console.log(document.getElementById('notMatch'))
                         let notMatch = document.createElement('span');
                         notMatch.id = 'notMatch';
                         notMatch.textContent = 'The confirmation text does not match the project name!'
