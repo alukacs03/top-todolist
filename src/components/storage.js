@@ -15,7 +15,7 @@ const storage = {
         let freshProject = new Project(project.name, project.notes, project.id, project.todos)
         storage.saveProject(freshProject)
     },
-    deleteProject (projectId) { // (WIP -> IMPLEMENT)
+    deleteProject (projectId) {
         localStorage.removeItem(projectId);
     },
     createDefaultProject() {

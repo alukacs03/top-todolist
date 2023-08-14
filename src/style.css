@@ -91,7 +91,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    overflow: scroll;
+    height: fit-content;
 }
 
 #mainTitle {
@@ -136,7 +136,7 @@ html, body {
 
 #projectPopUpGrid {
     grid-template-rows: 1fr 1fr 12fr 2fr;
-    grid-template-columns: min-content auto;
+    grid-template-columns: 5ch auto;
 }
 
 #addTaskTitle {
@@ -159,6 +159,10 @@ html, body {
     border: 0;
     outline: 0;
     background-color: var(--input-background-color);
+    color: white;
+}
+
+::placeholder {
     color: white;
 }
 
@@ -219,7 +223,7 @@ label {
     margin-top: 2rem;
     box-sizing: border-box;
     grid-row-gap: 1rem;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 #notMatch {

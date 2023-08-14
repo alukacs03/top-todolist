@@ -129,6 +129,10 @@ export const UI = {
     },
     loadProjectPage(id) { // load a specific project's todos
         UI.clearMainPage();
+        const mainpage = document.getElementById('mainpage');
+        mainpage.classList.remove(...mainpage.classList);
+        mainpage.dataset.projectId = id;
+        mainpage.classList.add('projectPage');
         if (id == 'defaultProject') {
             this.loadAllTasks();
             return;
@@ -163,6 +167,9 @@ export const UI = {
     loadAllTasks() { // loads all tasks to the grid from all projects
         UI.clearMainPage();
         UI.renderMainPage('allTasks')
+        const mainpage = document.getElementById('mainpage');
+        mainpage.classList.remove(...mainpage.classList);
+        mainpage.classList.add('allTasksPage');
         let projects = Object.values(localStorage);
         let todos = [];
         projects.forEach(element => { // put all todos in one array (todo lists the projects contain)
@@ -222,6 +229,9 @@ export const UI = {
     loadTodaysTasks() {
         UI.clearMainPage();
         UI.createPageLayout();
+        const mainpage = document.getElementById('mainpage');
+        mainpage.classList.remove(...mainpage.classList);
+        mainpage.classList.add('todayPage');
         const mainTitle = document.getElementById('mainTitle');
         mainTitle.textContent = "Today's tasks";
         let projects = Object.values(localStorage);
@@ -238,6 +248,9 @@ export const UI = {
     loadThisWeeksTasks() {
         UI.clearMainPage();
         UI.createPageLayout();
+        const mainpage = document.getElementById('mainpage');
+        mainpage.classList.remove(...mainpage.classList);
+        mainpage.classList.add('thisWeekPage');
         const mainTitle = document.getElementById('mainTitle');
         mainTitle.textContent = "This week's tasks";
         let projects = Object.values(localStorage);
@@ -299,9 +312,22 @@ export const UI = {
         buttonDiv.removeChild(addTaskButton);
         buttonDiv.appendChild(saveEditButton);
     },
-    handleDelete(todoId, projectId) { // !!WIP!! handles the delete button press
+    handleDelete(todoId, projectId) { //handles delete todo button press
         storage.deleteTodo(todoId, projectId);
-        this.loadAllTasks(); // replace with logic to decide whether it's all tasks, project or today / this week view
+        UI.reloadCurrentPage();
+    },
+    reloadCurrentPage() { // gets the current page and reloads it
+        const mainpage = document.querySelector('#mainpage');
+        if (mainpage.classList.contains('allTasksPage')) {
+            UI.loadAllTasks();
+        } else if (mainpage.classList.contains('todayPage')) {
+            UI.loadTodaysTasks();
+        } else if (mainpage.classList.contains('thisWeekPage')) {
+            UI.loadThisWeeksTasks();
+        } else if (mainpage.classList.contains('projectPage')) {
+            const projectId = mainpage.dataset.projectId;
+            UI.loadProjectPage(projectId);
+        }
     },
     loadTask(e) { //loads one specific task to the grid (called in a loop)
         let gridElement = document.createElement('div');
@@ -350,7 +376,7 @@ export const UI = {
         });
         gridElement.appendChild(deleteBtn);
     },
-    renderAddTaskPopUp(clickEvent) { // (WIP -> IMPLEMENT)
+    renderAddTaskPopUp(clickEvent) {
         UI.clearMainPage();
         let projectId = clickEvent.target.dataset.projectId;
         UI.renderPopUp();
@@ -740,9 +766,10 @@ export const UI = {
         cancelButton.id = 'cancelButton'
         cancelButton.classList.add('button');
         cancelButton.classList.add('greenBtn');
-        cancelButton.addEventListener('click', () => {
+        cancelButton.addEventListener('click', handleCancelButton);
+        function handleCancelButton() {
             UI.loadAllTasks();
-        });
+        }
         addTaskButtonDiv.appendChild(cancelButton);
         //cancel button
         const createProjectButtonOnPopUp = document.createElement('button');
@@ -815,9 +842,20 @@ export const UI = {
         nameInput.value = project.name;
         const notesInput = document.getElementById('notesInput');
         notesInput.value = project.notes;
-        const cancelButton = document.getElementById('cancelButton');
+        const oldCancelButton = document.getElementById('cancelButton');
         const createButton = document.getElementById('createProjectButtonOnPopUp')
         const buttonDiv = document.getElementById('addTaskButtonDiv');
+        buttonDiv.removeChild(oldCancelButton);
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'CANCEL';
+        cancelButton.id = 'cancelButton'
+        cancelButton.classList.add('button');
+        cancelButton.classList.add('greenBtn');
+        cancelButton.addEventListener('click', handleCancelButton);
+        function handleCancelButton() {
+            UI.loadProjectPage(projectId);
+        }
+        buttonDiv.appendChild(cancelButton);
         buttonDiv.removeChild(createButton);
         const editProjectButtonOnPopUp = document.createElement('button');
         editProjectButtonOnPopUp.textContent = 'SAVE EDIT';
@@ -829,6 +867,9 @@ export const UI = {
         function handleEditProjectClick() {
             if (document.forms.projectPopUpGrid.checkValidity()) {
                 UI.saveProjectEdit(document.forms.projectPopUpGrid, Number(projectId));
+            }
+            else {
+                alert('Form cannot be empty!')
             }
         }
         addTaskButtonDiv.appendChild(editProjectButtonOnPopUp);
