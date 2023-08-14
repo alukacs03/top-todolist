@@ -1,4 +1,4 @@
 import { UI } from '../src/components/pageRenderer';
-import css from './style.css';
+import './style.css';
 
 UI.initialLoad();
